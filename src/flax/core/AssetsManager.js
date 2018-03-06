@@ -218,9 +218,9 @@ flax.AssetsManager = cc.Class.extend({
         //the min tool version this API needed
         var toolVersion = dict["metadata"]["version"] || dict["metadata"]["flaxVersion"];
         this.toolsVersion[assetsFile] = toolVersion || 0;
-        if(!toolVersion || toolVersion < flax.minToolVersion){
-            throw "The resource: " + assetsFile + " was exported with the old version of Flax, please do it with current version!";
-        }
+        // if(!toolVersion || toolVersion < flax.minToolVersion){
+        //     throw "The resource: " + assetsFile + " was exported with the old version of Flax, please do it with current version!";
+        // }
         //get the fps from flash
         var fps = dict["metadata"]["fps"];
 
