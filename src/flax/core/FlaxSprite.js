@@ -234,10 +234,9 @@ flax._sprite = {
         if(this.define['anchors']){
             var an = this.define['anchors'][name];
             if(an != null) {
-                an = an[this.currentFrame];
-                if(an && typeof an === "string") {
-                    an = new flax.Anchor(an);
-                    this.define['anchors'][name][this.currentFrame] = an;
+                if(!(an instanceof flax.Anchor)){
+                    an = new flax.Anchor(an[this.currentFrame]);
+                    this.define['anchors'][name] = an;
                 }
                 return an;
             }
@@ -305,21 +304,12 @@ flax._sprite = {
     prevFrame:function(){
         this.gotoAndStop(Math.max(--this.currentFrame , 0));
     },
-    play:function(reversed)
+    play:function()
     {
         //disable the language element and button to play
         if(this._isLanguageElement || this.__isButton) return;
-
-        if(reversed !== true) {
-            this._loopStart = 0;
-            this._loopEnd = this.totalFrames - 1;
-        } else {
-            this._animReversed = true;
-            this._loopStart = this.totalFrames - 1;
-            this.currentFrame = this._loopStart;
-            this._loopEnd = 0;
-        }
-
+        this._loopStart = 0;
+        this._loopEnd = this.totalFrames - 1;
         this.updatePlaying(true);
         this.currentAnim = null
     },
@@ -380,7 +370,6 @@ flax._sprite = {
     },
     gotoAndPlay:function(frameOrLabel,forcePlay)
     {
-        this._animReversed = false;
         //disable the language element and button to play
         if(this._isLanguageElement || this.__isButton) return false;
         if(typeof frameOrLabel === "string") {
@@ -419,13 +408,11 @@ flax._sprite = {
     },
     stop:function()
     {
-        this._animReversed = false;
         this.updatePlaying(false);
         this.currentAnim = null
     },
     gotoAndStop:function(frameOrLabel)
     {
-        this._animReversed = false;
         //convert frame label to frame number
         if(isNaN(frameOrLabel)) {
             var lbl = this.getLabels(frameOrLabel);
@@ -475,20 +462,12 @@ flax._sprite = {
         }
     },
     _animTime:0,
-    _animReversed:false,
     onFrame:function(delta)
     {
         if(!this.visible) return;
-
-        var reversed = this._animReversed;
-        var d = reversed ? -1 : 1;
-        this.currentFrame += d;
-
+        this.currentFrame++;
         this._animTime += delta;
-
-        var end = !reversed  ? this.currentFrame > this._loopEnd : this.currentFrame < this._loopEnd;
-
-        if(end)
+        if(this.currentFrame > this._loopEnd)
         {
             this.currentFrame = this._loopEnd;
             if(this.autoDestroyWhenOver || this.autoStopWhenOver || this.autoHideWhenOver){
@@ -498,21 +477,18 @@ flax._sprite = {
             {
                 this.onAnimationOver.dispatch(this);
             }
-            if(this.autoDestroyWhenOver) {
+            if(this.autoDestroyWhenOver){
                 this.destroy();
-            }else if(this.autoHideWhenOver) {
+            }else if(this.autoHideWhenOver){
                 this.visible = false;
-            }else if(this._animSequence.length) {
+            }else if(this._animSequence.length){
                 this._playNext();
-            }else if(!this.autoStopWhenOver) {
+            }else if(!this.autoStopWhenOver){
                 this.currentFrame = this._loopStart;
             }
             this._animTime = 0;
         }
-        end = !reversed  ? this.currentFrame > this._loopEnd : this.currentFrame < this._loopEnd;
-        var last = !reversed ? this.currentFrame > this.totalFrames - 1 : this.currentFrame < 0;
-        if(end || last) this.currentFrame = this._loopStart;
-
+        if(this.currentFrame > this._loopEnd || this.currentFrame > this.totalFrames - 1) this.currentFrame = this._loopStart;
         this.renderFrame(this.currentFrame);
     },
     _playNext:function(){
@@ -711,7 +687,6 @@ flax._sprite = {
         this._animSequence.length = 0;
         this._loopSequence = false;
         this._sequenceIndex = 0;
-        this._animReversed = false;
         this.currentAnim = null;
         this.__isInputMask = false;
     },

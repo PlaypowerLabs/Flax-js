@@ -2,13 +2,13 @@
 <project name="Javascript compress project" basedir="" default="compile">
 
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
-             classpath="/Users/long/Documents/www/cocos2d-js-v3.6.1/tools/cocos2d-console/bin/../plugins/project_compile/build_web/bin/compiler-1.7.jar"/>
+             classpath="./compiler.jar"/>
 
     <target name="compile">
         <jscomp compilationLevel="simple"
                 warning="quiet"
                 debug="false" 
-                output="./bin/flax.min.js"
+                output="./bin/flax-min.js"
                 languagein="ECMASCRIPT5"
                 >
             <!--core -->
@@ -25,6 +25,7 @@
                 <file name="src/flax/module/TileMapModule.js"/>
                 <file name="src/flax/module/ScreenLayoutModule.js"/>
                 <file name="src/flax/module/MoveModule.js"/>
+                <file name="src/flax/module/PhysicsModule.js"/>
                 <file name="src/flax/core/FlaxSprite.js"/>
                 <file name="src/flax/core/Animator.js"/>
                 <file name="src/flax/core/Image.js"/>

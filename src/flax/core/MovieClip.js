@@ -146,7 +146,7 @@ flax._movieClip = {
         cc.Node.prototype.setOpacity.call(this, opacity);
         for(var k in this.namedChildren){
             var child = this.namedChildren[k];
-            if(child.setOpacity) child.setOpacity(opacity);
+            if(child.setOpacity) child.setOpacity(child.opacity * (opacity/255));
         }
     },
     setColor: function (color) {
@@ -314,8 +314,6 @@ flax._movieClip = {
             var child = this.namedChildren[key];
             if(child.__isMovieClip === true) {
                 child.setAutoPlayChildren(v);
-            }
-            if(child.__isFlaxSprite) {
                 v ? child.play() : child.stop();
             }
         }
@@ -408,8 +406,6 @@ flax._movieClip = {
     onRecycle:function()
     {
         this._super();
-        this.sameFpsForChildren = true;
-        this.createChildFromPool = true;
         this._autoPlayChildren = false;
         if(RESET_FRAME_ON_RECYCLE){
             for(var key in this.namedChildren) {
@@ -419,14 +415,6 @@ flax._movieClip = {
                 }
             }
         }
-    },
-    onExit: function () {
-        this._super();
-        for(var childName in this.namedChildren){
-            delete this.namedChildren[childName];
-            delete this[childName];
-        }
-        //this._childrenDefine = null;
     }
 };
 

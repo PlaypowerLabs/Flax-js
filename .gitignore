@@ -12,3 +12,8 @@
 .idea/vcs.xml
 
 .idea/workspace.xml
+
+**/*.DS_Store
+
+yarn-error.log
+npm-debug.log
